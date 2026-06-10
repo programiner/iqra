@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#JusticeForIqra — Tweet Campaign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #fafaf9;
+    --surface: #ffffff;
+    --border: #e8e6e1;
+    --border-strong: #d4d0c8;
+    --text: #111110;
+    --muted: #6f6d66;
+    --faint: #a8a49c;
+    --accent: #8b1a1a;
+    --accent-light: #f5ecec;
+    --accent-mid: #c94040;
+    --tag-bg: #f0ebe0;
+    --tag-text: #6b5a2a;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111110;
+      --surface: #1a1917;
+      --border: #2a2926;
+      --border-strong: #3a3835;
+      --text: #f0eeea;
+      --muted: #8a8780;
+      --faint: #555350;
+      --accent: #e05252;
+      --accent-light: #2a1515;
+      --accent-mid: #e05252;
+      --tag-bg: #1e1c14;
+      --tag-text: #c4a95a;
+    }
+  }
+
+  html { font-size: 16px; scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 50;
+  }
+  .nav-logo {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .nav-logo .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent-mid);
+  }
+  .nav-time {
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--accent-light);
+    color: var(--accent-mid);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 20px;
+    border: 1px solid var(--accent-mid);
+    opacity: 0.85;
+  }
+  .live-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--accent-mid);
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* HERO */
+  .hero {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 72px 24px 56px;
+    text-align: center;
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .hero-eyebrow::before, .hero-eyebrow::after {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--border-strong);
+  }
+  .hero-hashtag {
+    font-size: clamp(36px, 7vw, 64px);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+  .hero-hashtag span { color: var(--accent); }
+  .hero-sub {
+    font-size: 16px;
+    color: var(--muted);
+    line-height: 1.65;
+    max-width: 520px;
+    margin: 0 auto 32px;
+    font-weight: 400;
+  }
+  .campaign-time {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 500;
+  }
+  .campaign-time .sep { color: var(--border-strong); }
+
+  /* STORY SECTION */
+  .section {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px 64px;
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin-bottom: 16px;
+  }
+  .story-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .story-top {
+    padding: 28px 32px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .story-name {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+  }
+  .story-meta {
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .story-meta .pill {
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    font-size: 11.5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+  .story-body { padding: 24px 32px; }
+  .story-body p {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .story-body p:last-child { margin-bottom: 0; }
+  .story-body strong { color: var(--text); font-weight: 500; }
+  .timeline {
+    padding: 20px 32px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+  }
+  .t-event {
+    flex: 1;
+    min-width: 130px;
+    padding-right: 16px;
+    position: relative;
+  }
+  .t-event::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 7px;
+    width: 16px; height: 1px;
+    background: var(--border);
+  }
+  .t-event:last-child::after { display: none; }
+  .t-date { font-size: 11px; color: var(--faint); font-weight: 500; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .t-label { font-size: 13px; color: var(--text); font-weight: 500; line-height: 1.4; }
+  .t-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-mid); margin-bottom: 8px; }
+  .t-dot.gray { background: var(--faint); }
+
+  /* DIVIDER */
+  .divider {
+    max-width: 760px;
+    margin: 0 auto 48px;
+    padding: 0 24px;
+    border: none;
+    border-top: 1px solid var(--border);
+  }
+
+  /* QUOTES SECTION */
+  .quotes-header {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px 24px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .quotes-header h2 {
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .quotes-header .count {
+    font-size: 13px;
+    color: var(--faint);
+    font-weight: 400;
+  }
+
+  .quotes-grid {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* QUOTE CARD */
+  .quote-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 20px 14px;
+    transition: border-color 0.15s;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .quote-card:hover { border-color: var(--border-strong); }
+  .quote-header {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .quote-sn {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+    letter-spacing: -0.01em;
+  }
+  .quote-text {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text);
+    font-weight: 400;
+  }
+  .quote-tag {
+    color: var(--accent-mid);
+    font-weight: 500;
+    font-size: 14px;
+  }
+  .quote-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+  .btn-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--muted);
+    font-family: 'Inter', sans-serif;
+    transition: all 0.12s;
+    user-select: none;
+  }
+  .btn-action:hover { background: var(--surface); border-color: var(--border-strong); color: var(--text); }
+  .btn-action:active { transform: scale(0.97); }
+  .btn-action.share {
+    background: #000;
+    color: #fff;
+    border-color: #000;
+  }
+  .btn-action.share:hover { background: #222; border-color: #222; }
+  @media (prefers-color-scheme: dark) {
+    .btn-action.share { background: var(--text); color: var(--bg); border-color: var(--text); }
+    .btn-action.share:hover { background: #d0cec8; }
+  }
+  .btn-action svg { width: 14px; height: 14px; flex-shrink: 0; }
+  .word-count {
+    margin-left: auto;
+    font-size: 11.5px;
+    color: var(--faint);
+  }
+
+  /* COPY FEEDBACK */
+  .btn-action.copied { background: #e8f5ec; color: #2d7a4a; border-color: #b3dfc0; }
+  @media (prefers-color-scheme: dark) {
+    .btn-action.copied { background: #0e2218; color: #5ecb88; border-color: #1d4a30; }
+  }
+
+  /* LOADING */
+  .loading-state {
+    text-align: center;
+    padding: 48px 0;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .spinner {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent-mid);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin: 0 auto 12px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* EMPTY */
+  .empty-state {
+    text-align: center;
+    padding: 64px 0;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 28px 24px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--faint);
+    line-height: 1.7;
+  }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--text); }
+
+  @media (max-width: 600px) {
+    .hero { padding: 48px 20px 40px; }
+    .section, .quotes-header, .quotes-grid { padding-left: 16px; padding-right: 16px; }
+    .story-top, .story-body, .timeline { padding-left: 20px; padding-right: 20px; }
+    .campaign-time { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="dot"></div>
+    #JusticeForIqra
+  </div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <div class="live-badge">
+      <div class="live-dot"></div>
+      Live campaign
+    </div>
+    <div class="nav-time" id="navClock"></div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-eyebrow">Tweet Campaign</div>
+  <h1 class="hero-hashtag"><span>#</span>justiceforiqra</h1>
+  <p class="hero-sub">Thousands of voices. One hashtag. Tweet, repost, and amplify — demand the truth and accountability Iqra's family deserves.</p>
+  <div class="campaign-time">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    10 June 2026
+    <span class="sep">·</span>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    8:30 PM IST
+  </div>
+</header>
+
+<!-- STORY SECTION -->
+<section class="section">
+  <div class="section-label">Who is Iqra?</div>
+  <div class="story-card">
+    <div class="story-top">
+      <div class="story-name">Iqra Firdous</div>
+      <div class="story-meta">
+        <span class="pill">12–13 years old</span>
+        <span>Arai village, Poonch, J&K</span>
+      </div>
+    </div>
+    <div class="story-body">
+      <p>Iqra Firdous was a young girl from Arai village in Poonch district, Jammu &amp; Kashmir. She was reported <strong>missing on 30 May 2026</strong> and her body was recovered from a river near Sathra on <strong>3 June 2026</strong>.</p>
+      <p>The incident triggered <strong>widespread protests</strong> across the region, with residents demanding a transparent investigation and accountability. A case has been registered and police continue to investigate.</p>
+      <p>Her family and community deserve <strong>truth, transparency, and justice</strong>. Until then, we will not be silent.</p>
+    </div>
+    <div class="timeline">
+      <div class="t-event">
+        <div class="t-dot"></div>
+        <div class="t-date">30 May 2026</div>
+        <div class="t-label">Reported missing</div>
+      </div>
+      <div class="t-event">
+        <div class="t-dot"></div>
+        <div class="t-date">3 Jun 2026</div>
+        <div class="t-label">Body recovered near Sathra</div>
+      </div>
+      <div class="t-event">
+        <div class="t-dot"></div>
+        <div class="t-date">Since then</div>
+        <div class="t-label">Investigation ongoing. Protests continue.</div>
+      </div>
+      <div class="t-event">
+        <div class="t-dot gray"></div>
+        <div class="t-date">10 Jun 2026</div>
+        <div class="t-label">Tweet campaign — 8:30 PM IST</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- QUOTES HEADER -->
+<div class="quotes-header">
+  <h2>Campaign quotes</h2>
+  <span class="count" id="quoteCount">Loading…</span>
+</div>
+
+<!-- QUOTES GRID -->
+<div class="quotes-grid" id="quotesGrid">
+  <div class="loading-state"><div class="spinner"></div>Fetching quotes…</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div style="margin-bottom:6px">
+    <strong style="color:var(--text); font-weight:500">#justiceforiqra</strong> &nbsp;·&nbsp; Justice &nbsp;·&nbsp; Accountability &nbsp;·&nbsp; Truth
+  </div>
+  <div>This campaign page is run by supporters of Iqra Firdous's family. Quotes credit goes to respective owners.</div>
+  <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border)">
+    Designed by <a href="https://www.instagram.com/ig.ajaz/" target="_blank" rel="noopener noreferrer" style="color:var(--text); font-weight:500; text-decoration:none; border-bottom:1px solid var(--border-strong);">اعجاز</a>
+  </div>
+</footer>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAdPcwdsw_89cMDIUBmG-XHT5SkwlTMMes",
+  authDomain: "justiceforiqra.firebaseapp.com",
+  projectId: "justiceforiqra",
+  storageBucket: "justiceforiqra.firebasestorage.app",
+  messagingSenderId: "512035775265",
+  appId: "1:512035775265:web:b7b9b412dbc110d158d460"
+};
+const COLLECTION = "Quotes";
+
+let db;
+try {
+  firebase.initializeApp(FIREBASE_CONFIG);
+  db = firebase.firestore();
+  loadQuotes();
+} catch(e) {
+  showError("Could not connect to the database.");
+}
+
+async function loadQuotes() {
+  try {
+    const snap = await db.collection(COLLECTION).orderBy("createdAt", "desc").get();
+    const quotes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderQuotes(quotes);
+  } catch(e) {
+    showError("Could not load quotes. Please refresh.");
+  }
+}
+
+function getQuoteBody(text) {
+  return (text || "").replace(/\n?#justiceforiqra/gi, "").trim();
+}
+
+function renderQuotes(quotes) {
+  const grid = document.getElementById("quotesGrid");
+  const count = document.getElementById("quoteCount");
+  count.textContent = quotes.length + " quotes";
+
+  if (!quotes.length) {
+    grid.innerHTML = '<div class="empty-state">No quotes yet.<br>Check back after the campaign starts.</div>';
+    return;
+  }
+
+  grid.innerHTML = quotes.map((q, i) => {
+    const body = getQuoteBody(q.text);
+    const words = body.split(/\s+/).filter(Boolean).length;
+    const fullText = body + "\n#justiceforiqra";
+    const sn = i + 1;
+    return `
+    <article class="quote-card">
+      <div class="quote-header">
+        <span class="quote-sn">${sn}</span>
+        <div class="quote-text">${escHtml(body)}</div>
+      </div>
+      <div class="quote-tag">#justiceforiqra</div>
+      <div class="quote-actions">
+        <button class="btn-action copy-btn" data-text="${escAttr(fullText)}" onclick="copyQuote(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy text
+        </button>
+        <button class="btn-action share" data-text="${escAttr(fullText)}" onclick="shareOnX(this)">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.742l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
+          Share on X
+        </button>
+        <span class="word-count">${words}w</span>
+      </div>
+    </article>`;
+  }).join("");
+}
+
+function copyQuote(btn) {
+  const text = btn.getAttribute("data-text");
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.innerHTML;
+    btn.classList.add("copied");
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
+    setTimeout(() => { btn.classList.remove("copied"); btn.innerHTML = orig; }, 2000);
+  }).catch(() => {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+    btn.textContent = "Copied!";
+    setTimeout(() => btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy text`, 2000);
+  });
+}
+
+function shareOnX(btn) {
+  const text = btn.getAttribute("data-text");
+  const encoded = encodeURIComponent(text);
+  const url = "https://x.com/intent/tweet?text=" + encoded;
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
+function showError(msg) {
+  const grid = document.getElementById("quotesGrid");
+  grid.innerHTML = `<div class="empty-state">${escHtml(msg)}</div>`;
+  document.getElementById("quoteCount").textContent = "";
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function escAttr(s) {
+  return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+
+// Nav clock
+function updateClock() {
+  const now = new Date();
+  const time = now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true, timeZone: "Asia/Kolkata" });
+  document.getElementById("navClock").textContent = time + " IST";
+}
+updateClock();
+setInterval(updateClock, 30000);
+</script>
+</body>
+</html>
