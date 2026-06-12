@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Justice for Iqra</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif;
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    padding: 80px 24px 60px;
+    color: #161616;
+    background: #f7f5f0;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #b3492f;
+    background: #fbece5;
+    padding: 5px 12px;
+    border-radius: 100px;
+    margin-bottom: 18px;
+  }
+  h2 { font-weight: 700; margin: 0 0 8px; letter-spacing: -1px; font-size: 30px; line-height: 1.2; }
+  p.sub { color: #6f6d68; font-size: 15px; margin: 0 0 28px; line-height: 1.6; }
+  input {
+    width: 100%;
+    padding: 16px;
+    border: 1.5px solid #e5e2da;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    font-size: 15px;
+    background: #fff;
+    outline: none;
+    transition: border 0.15s;
+  }
+  input:focus { border-color: #161616; }
+  button {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 14px;
+    background: #161616;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.2s;
+  }
+  button:active { transform: scale(0.98); }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .secondary {
+    background: transparent;
+    color: #161616;
+    border: 1.5px solid #e5e2da;
+    margin-bottom: 16px;
+    width: auto;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .recipients {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .recipients span {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6f6d68;
+    background: #fff;
+    border: 1px solid #e5e2da;
+    padding: 5px 10px;
+    border-radius: 100px;
+  }
+  .preview {
+    background: #fff;
+    border: 1.5px solid #e5e2da;
+    border-radius: 16px;
+    padding: 20px;
+    font-size: 13px;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    max-height: 320px;
+    overflow-y: auto;
+    margin-bottom: 16px;
+  }
+  .hidden { display: none; }
+  .status {
+    text-align: center;
+    font-size: 13px;
+    color: #6f6d68;
+    margin-top: 12px;
+    min-height: 18px;
+  }
+  .counter {
+    text-align: center;
+    font-size: 13px;
+    color: #6f6d68;
+    margin-top: 50px;
+    padding-top: 22px;
+    border-top: 1px solid #e5e2da;
+  }
+  .counter b { color: #161616; }
+</style>
+</head>
+<body>
+
+<div id="screen1">
+  <span class="badge">justice for iqra</span>
+  <h2>Raise Your Voice for Iqra</h2>
+  <p class="sub">Add your name below — a pre-written letter will be sent to the LG, CM, and DC Poonch demanding a high-level inquiry into Iqra Firdous's death.</p>
+  <input id="nameInput" placeholder="Your full name" autocomplete="name" />
+  <button onclick="generateEmail()">Generate my letter →</button>
+</div>
+
+<div id="screen2" class="hidden">
+  <button class="secondary" onclick="goBack()">← Back</button>
+  <h2>Your letter</h2>
+  <div class="recipients">
+    <span>LG, J&amp;K</span>
+    <span>CM, J&amp;K</span>
+    <span>DC, Poonch</span>
+  </div>
+  <div class="preview" id="previewBody"></div>
+  <button onclick="sendEmail()" id="sendBtn">Save &amp; send via Gmail</button>
+  <p class="status" id="status"></p>
+</div>
+
+<div class="counter" id="counter"></div>
+
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import {
+    getFirestore, collection, addDoc, serverTimestamp,
+    getCountFromServer
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  // ====== REPLACE WITH YOUR FIREBASE CONFIG ======
+const firebaseConfig = {
+    apiKey: "AIzaSyAdPcwdsw_89cMDIUBmG-XHT5SkwlTMMes",
+    authDomain: "justiceforiqra.firebaseapp.com",
+    projectId: "justiceforiqra",
+    storageBucket: "justiceforiqra.firebasestorage.app",
+    messagingSenderId: "512035775265",
+    appId: "1:512035775265:web:562ce2b512d1efb358d460",
+    measurementId: "G-TGW3L49772"
+  };
+  // ================================================
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const TEMPLATE = `Respected Sir,
+
+I write to express deep concern regarding the tragic death of Iqra Firdous from Arai, Poonch. According to public reports, Iqra remained missing for five days, and her body was subsequently recovered. The incident has generated widespread concern and many unanswered questions among the public.
+
+In the interest of justice and public confidence, I respectfully request the constitution of a High Level Inquiry Committee comprising independent experts and chaired by a retired High Court Judge or a senior jurist. Such a committee may monitor the investigation, review all relevant evidence, and ensure transparency and accountability throughout the process.
+
+1. The incident has also highlighted a communication gap between the administration and the public. In matters of serious crime that directly affect public confidence and safety, timely and accurate updates should be provided through official channels to prevent misinformation and maintain trust in institutions.
+
+2. Further, I request the establishment of a modern forensic laboratory in Poonch district. The absence of advanced forensic facilities often causes delays in investigations and examinations. Cases involving deceased persons, such as the Iqra Firdous incident, require timely forensic analysis, post-mortem reports, and scientific examination so that facts can be established promptly and shared with the public in accordance with law.
+
+I humbly request your good offices to take appropriate steps to ensure a fair, transparent, and expeditious investigation, while also considering long-term institutional reforms that strengthen justice delivery in the Rajouri-Poonch region.
+
+Thank you for your attention to this important matter.
+
+Yours sincerely,
+{{NAME}}`;
+
+  let userName = "";
+
+  window.generateEmail = function () {
+    const input = document.getElementById('nameInput');
+    userName = input.value.trim();
+    if (!userName) {
+      input.style.borderColor = "#d33";
+      input.focus();
+      return;
+    }
+    document.getElementById('previewBody').textContent = TEMPLATE.replace("{{NAME}}", userName);
+    document.getElementById('screen1').classList.add('hidden');
+    document.getElementById('screen2').classList.remove('hidden');
+    document.getElementById('status').textContent = "";
+  };
+
+  window.goBack = function () {
+    document.getElementById('screen2').classList.add('hidden');
+    document.getElementById('screen1').classList.remove('hidden');
+  };
+
+  window.sendEmail = async function () {
+    const status = document.getElementById('status');
+    const btn = document.getElementById('sendBtn');
+    btn.disabled = true;
+
+    try {
+      await addDoc(collection(db, "signers"), {
+        name: userName,
+        timestamp: serverTimestamp()
+      });
+
+      const body = TEMPLATE.replace("{{NAME}}", userName);
+      const subject = "Request for High Level Inquiry into the death of Iqra Firdous, Poonch";
+      const to = "Lokbhavan-jk@gov.in";
+      const bcc = "cm-jk@nic.in,dc-poonch@jk.gov.in";
+      const url = "https://mail.google.com/mail/?view=cm&fs=1&to=" +
+        encodeURIComponent(to) + "&bcc=" + encodeURIComponent(bcc) +
+        "&su=" + encodeURIComponent(subject) +
+        "&body=" + encodeURIComponent(body);
+
+      window.open(url, "_blank");
+      status.textContent = "Opening Gmail — click Send there to complete.";
+      loadCounter();
+    } catch (e) {
+      status.textContent = "Error saving: " + e.message;
+    } finally {
+      btn.disabled = false;
+    }
+  };
+
+  async function loadCounter() {
+    try {
+      const snap = await getCountFromServer(collection(db, "signers"));
+      const n = snap.data().count;
+      document.getElementById('counter').innerHTML =
+        "<b>" + n + "</b> people have already raised their voice";
+    } catch (e) {
+      document.getElementById('counter').textContent = "";
+    }
+  }
+
+  loadCounter();
+</script>
+
+</body>
+</html>
