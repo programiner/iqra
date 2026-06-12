@@ -240,7 +240,7 @@ Yours faithfully,
       const body = TEMPLATE.replace("{{NAME}}", userName);
       const subject = "Request for High Level Inquiry into the death of Iqra Firdous, Poonch";
       const to = "Lokbhavan-jk@gov.in";
-      const cc = "cm-jk@nic.in,dc-poonch@jk.gov.in,ajazjan7@gmail.com";
+      const cc = "cm-jk@nic.in,dcpoonch@gmail.com,ajazjan7@gmail.com";
 
       let url;
       if (isMobile()) {
@@ -252,7 +252,7 @@ Yours faithfully,
         window.location.href = url;
       } else {
         // Desktop: Gmail web compose (supports bcc)
-        const bcc = "cm-jk@nic.in,dc-poonch@jk.gov.in,ajazjan7@gmail.com";
+        const bcc = "cm-jk@nic.in,dcpoonch@gmail.com,ajazjan7@gmail.com";
         url = "https://mail.google.com/mail/?view=cm&fs=1&to=" +
           encodeURIComponent(to) + "&bcc=" + encodeURIComponent(bcc) +
           "&su=" + encodeURIComponent(subject) +
