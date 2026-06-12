@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -197,6 +198,10 @@ Yours sincerely,
     document.getElementById('screen1').classList.remove('hidden');
   };
 
+  function isMobile() {
+    return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  }
+
   window.sendEmail = async function () {
     const status = document.getElementById('status');
     const btn = document.getElementById('sendBtn');
@@ -211,14 +216,27 @@ Yours sincerely,
       const body = TEMPLATE.replace("{{NAME}}", userName);
       const subject = "Request for High Level Inquiry into the death of Iqra Firdous, Poonch";
       const to = "Lokbhavan-jk@gov.in";
-      const bcc = "cm-jk@nic.in,dc-poonch@jk.gov.in";
-      const url = "https://mail.google.com/mail/?view=cm&fs=1&to=" +
-        encodeURIComponent(to) + "&bcc=" + encodeURIComponent(bcc) +
-        "&su=" + encodeURIComponent(subject) +
-        "&body=" + encodeURIComponent(body);
+      const cc = "cm-jk@nic.in,dc-poonch@jk.gov.in";
 
-      window.open(url, "_blank");
-      status.textContent = "Opening Gmail — click Send there to complete.";
+      let url;
+      if (isMobile()) {
+        // mailto: directly opens Gmail app / any mail app with full prefill
+        url = "mailto:" + encodeURIComponent(to) +
+          "?cc=" + encodeURIComponent(cc) +
+          "&subject=" + encodeURIComponent(subject) +
+          "&body=" + encodeURIComponent(body);
+        window.location.href = url;
+      } else {
+        // Desktop: Gmail web compose (supports bcc)
+        const bcc = "cm-jk@nic.in,dc-poonch@jk.gov.in";
+        url = "https://mail.google.com/mail/?view=cm&fs=1&to=" +
+          encodeURIComponent(to) + "&bcc=" + encodeURIComponent(bcc) +
+          "&su=" + encodeURIComponent(subject) +
+          "&body=" + encodeURIComponent(body);
+        window.open(url, "_blank");
+      }
+
+      status.textContent = "Opening your mail app — tap Send there to complete.";
       loadCounter();
     } catch (e) {
       status.textContent = "Error saving: " + e.message;
