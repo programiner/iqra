@@ -1,0 +1,587 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Justice for Iqra</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root{
+    --paper: #fafaf8;
+    --ink: #15151a;
+    --ink-soft: #6b6b72;
+    --line: #e4e3df;
+    --line-soft: #ededeb;
+    --red: #d62b1f;
+    --red-soft: #d62b1f0f;
+    --done: #1a7a4c;
+    --done-soft: #1a7a4c0f;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html, body{
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body{
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation: none !important; transition: none !important; }
+  }
+
+  .mono{ font-family: 'JetBrains Mono', monospace; }
+
+  /* ---------- HEADER ---------- */
+  header{
+    width: 100%;
+    max-width: 600px;
+    padding: 44px 20px 24px;
+  }
+
+  .case-id{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+
+  .case-id::before{
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--red);
+    flex-shrink: 0;
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+
+  @keyframes pulse{
+    0%, 100%{ opacity: 1; }
+    50%{ opacity: 0.35; }
+  }
+
+  h1{
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: clamp(30px, 7.5vw, 42px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  h1 span{ color: var(--red); }
+
+  .sub{
+    margin-top: 12px;
+    color: var(--ink-soft);
+    font-size: 15px;
+    line-height: 1.55;
+    max-width: 440px;
+  }
+
+  /* ---------- LEDGER (analytics) ---------- */
+  .ledger{
+    width: 100%;
+    max-width: 600px;
+    padding: 0 20px;
+    margin-bottom: 28px;
+  }
+
+  .ledger-inner{
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: #fff;
+    overflow: hidden;
+  }
+
+  .ledger-row{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .ledger-row:last-child{ border-bottom: none; }
+
+  .ledger-row.lead{
+    background: var(--red-soft);
+  }
+
+  .ledger-label{
+    font-size: 13px;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .ledger-row.lead .ledger-label{
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .ledger-num{
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--ink);
+  }
+
+  .ledger-row.lead .ledger-num{
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--red);
+  }
+
+  .ledger-note{
+    font-size: 11px;
+    color: #a3a2a0;
+    padding: 10px 18px 0;
+  }
+
+  /* ---------- STEPS ---------- */
+  .steps{
+    width: 100%;
+    max-width: 600px;
+    padding: 0 20px;
+    display: flex;
+    gap: 1px;
+    margin-bottom: 32px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--line);
+  }
+
+  .step{
+    flex: 1;
+    background: #fff;
+    padding: 14px 12px;
+  }
+
+  .step-num{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--red);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .step-text{
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.35;
+  }
+
+  /* ---------- FEED ---------- */
+  main{
+    width: 100%;
+    max-width: 600px;
+    padding: 0 20px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .card{
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 18px;
+    transition: border-color 0.2s ease;
+  }
+
+  .card.done{
+    border-color: var(--done);
+    background: var(--done-soft);
+  }
+
+  .card-text{
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--ink);
+    margin-bottom: 16px;
+    word-wrap: break-word;
+  }
+
+  .card-actions{
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn{
+    flex: 1;
+    border: none;
+    border-radius: 3px;
+    padding: 12px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: transform 0.12s ease, opacity 0.15s ease, background 0.15s ease;
+  }
+
+  .btn:active{ transform: scale(0.96); }
+
+  .btn-copy{
+    background: var(--paper);
+    border: 1px solid var(--line);
+    color: var(--ink);
+  }
+
+  .btn-copy:hover{ border-color: #c9c8c4; }
+
+  .btn-copy.copied{
+    border-color: var(--done);
+    color: var(--done);
+    background: var(--done-soft);
+  }
+
+  .btn-go{
+    background: var(--red);
+    color: #fff;
+  }
+
+  .btn-go:hover{ background: #b8241a; }
+
+  .btn-go.done{
+    background: var(--done);
+  }
+
+  .btn svg{ width: 14px; height: 14px; flex-shrink: 0; }
+
+  /* ---------- TOAST ---------- */
+  .toast{
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink);
+    color: #fff;
+    font-size: 13.5px;
+    font-weight: 500;
+    padding: 12px 20px;
+    border-radius: 4px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 100;
+    white-space: nowrap;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+
+  .toast.show{
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ---------- LOADING / EMPTY ---------- */
+  .state-msg{
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13.5px;
+    padding: 40px 20px;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    width: 100%;
+    max-width: 600px;
+    padding: 0 20px 48px;
+    text-align: center;
+    color: #a3a2a0;
+    font-size: 11.5px;
+  }
+
+  footer a{ color: var(--ink-soft); text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="case-id">Live tracker · case: justice for iqra</span>
+  <h1>Make her <span>see this.</span></h1>
+  <p class="sub">One comment won't move her. A thousand on her own reel might. Copy a line, paste it there, send it.</p>
+</header>
+
+<div class="ledger">
+  <div class="ledger-inner" id="ledger">
+    <div class="ledger-row lead">
+      <span class="ledger-label">Marked as sent</span>
+      <span class="ledger-num mono" id="statSent">—</span>
+    </div>
+    <div class="ledger-row">
+      <span class="ledger-label">Comments copied</span>
+      <span class="ledger-num mono" id="statCopied">—</span>
+    </div>
+    <div class="ledger-row">
+      <span class="ledger-label">Reel opened</span>
+      <span class="ledger-num mono" id="statOpened">—</span>
+    </div>
+    <div class="ledger-row">
+      <span class="ledger-label">Send rate</span>
+      <span class="ledger-num mono" id="statRate">—</span>
+    </div>
+  </div>
+  <p class="ledger-note">Self-reported — counts a tap, not a confirmed Instagram comment</p>
+</div>
+
+<div class="steps">
+  <div class="step">
+    <span class="step-num mono">01</span>
+    <span class="step-text">Copy a comment</span>
+  </div>
+  <div class="step">
+    <span class="step-num mono">02</span>
+    <span class="step-text">Paste it on the reel</span>
+  </div>
+  <div class="step">
+    <span class="step-num mono">03</span>
+    <span class="step-text">Send, then mark it done</span>
+  </div>
+</div>
+
+<main id="feed">
+  <p class="state-msg">Loading comments…</p>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<footer>
+  Comments pulled from a shared list · <a href="https://www.instagram.com/reels/DZupNbyTUss/" target="_blank" rel="noopener">view the reel</a>
+</footer>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore, collection, getDocs,
+    doc, runTransaction, onSnapshot
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAdPcwdsw_89cMDIUBmG-XHT5SkwlTMMes",
+    authDomain: "justiceforiqra.firebaseapp.com",
+    projectId: "justiceforiqra",
+    storageBucket: "justiceforiqra.firebasestorage.app",
+    messagingSenderId: "512035775265",
+    appId: "1:512035775265:web:a3a14338ab0c916b58d460",
+    measurementId: "G-9GDZ6J0598"
+  };
+
+  const REEL_URL = "https://www.instagram.com/reels/DZupNbyTUss/";
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const feed = document.getElementById('feed');
+  const toastEl = document.getElementById('toast');
+  const statSent = document.getElementById('statSent');
+  const statCopied = document.getElementById('statCopied');
+  const statOpened = document.getElementById('statOpened');
+  const statRate = document.getElementById('statRate');
+
+  let toastTimer = null;
+  function showToast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
+  }
+
+  // ---- robust clipboard copy with fallback for mobile/non-secure contexts ----
+  async function copyText(text){
+    // Modern API — works on HTTPS in most browsers
+    if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext){
+      try{
+        await navigator.clipboard.writeText(text);
+        return true;
+      }catch(e){
+        // fall through to fallback
+      }
+    }
+
+    // Fallback — works even on file:// or older mobile browsers,
+    // as long as it runs synchronously inside the click handler
+    try{
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.top = '0';
+      textarea.style.left = '0';
+      textarea.style.width = '1px';
+      textarea.style.height = '1px';
+      textarea.style.padding = '0';
+      textarea.style.border = 'none';
+      textarea.style.outline = 'none';
+      textarea.style.boxShadow = 'none';
+      textarea.style.background = 'transparent';
+      textarea.style.fontSize = '16px'; // prevents iOS zoom on focus
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      textarea.setSelectionRange(0, textarea.value.length);
+      const success = document.execCommand('copy');
+      document.body.removeChild(textarea);
+      return success;
+    }catch(e){
+      return false;
+    }
+  }
+
+  // ---- stats doc: stats/campaign { sent, copied, opened } ----
+  const statsRef = doc(db, "stats", "campaign");
+
+  function renderStats(data){
+    const sent = data.sent || 0;
+    const copied = data.copied || 0;
+    const opened = data.opened || 0;
+    statSent.textContent = sent.toLocaleString();
+    statCopied.textContent = copied.toLocaleString();
+    statOpened.textContent = opened.toLocaleString();
+    const rate = opened > 0 ? Math.round((sent / opened) * 100) : 0;
+    statRate.textContent = opened > 0 ? rate + '%' : '—';
+  }
+
+  onSnapshot(statsRef, (snap) => {
+    renderStats(snap.exists() ? snap.data() : {});
+  }, () => {
+    renderStats({});
+  });
+
+  async function bumpStat(field){
+    try{
+      await runTransaction(db, async (tx) => {
+        const snap = await tx.get(statsRef);
+        const data = snap.exists() ? snap.data() : {};
+        const current = data[field] || 0;
+        tx.set(statsRef, { ...data, [field]: current + 1 }, { merge: true });
+      });
+    }catch(e){
+      console.error("Stat update failed:", field, e);
+    }
+  }
+
+  // ---- build a card ----
+  function buildCard(text){
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    const p = document.createElement('p');
+    p.className = 'card-text';
+    p.textContent = text;
+
+    const actions = document.createElement('div');
+    actions.className = 'card-actions';
+
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'btn btn-copy';
+    copyBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy`;
+
+    const goBtn = document.createElement('button');
+    goBtn.className = 'btn btn-go';
+    goBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg> Open reel`;
+
+    let hasCopiedThisCard = false;
+    let hasOpenedThisCard = false;
+
+    copyBtn.addEventListener('click', async () => {
+      const ok = await copyText(text);
+      if (ok){
+        copyBtn.classList.add('copied');
+        copyBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Copied`;
+        showToast("Copied. Paste it on the reel.");
+        if (!hasCopiedThisCard){
+          hasCopiedThisCard = true;
+          bumpStat('copied');
+        }
+        setTimeout(() => {
+          copyBtn.classList.remove('copied');
+          copyBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy`;
+        }, 1800);
+      } else {
+        showToast("Copy failed — long-press the text above to copy manually.");
+      }
+    });
+
+    goBtn.addEventListener('click', async () => {
+      const ok = await copyText(text);
+
+      if (!hasOpenedThisCard){
+        hasOpenedThisCard = true;
+        bumpStat('opened');
+      }
+
+      if (!card.classList.contains('done')){
+        card.classList.add('done');
+        goBtn.classList.add('done');
+        goBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> I sent it`;
+        bumpStat('sent');
+      }
+
+      if (ok){
+        showToast("Copied. Opening the reel — just paste and send.");
+      } else {
+        showToast("Couldn't auto-copy — long-press the text above, then open the reel.");
+      }
+
+      window.open(REEL_URL, '_blank', 'noopener');
+    });
+
+    actions.appendChild(copyBtn);
+    actions.appendChild(goBtn);
+    card.appendChild(p);
+    card.appendChild(actions);
+    return card;
+  }
+
+  // ---- load quotes from Firestore ----
+  async function loadQuotes(){
+    try{
+      const snap = await getDocs(collection(db, "Quotes"));
+      feed.innerHTML = '';
+
+      if (snap.empty){
+        feed.innerHTML = '<p class="state-msg">No comments added yet. Add documents to the "Quotes" collection in Firestore.</p>';
+        return;
+      }
+
+      snap.forEach((d) => {
+        const data = d.data();
+        const text = data.text || data.quote || data.comment || Object.values(data)[0];
+        if (text) feed.appendChild(buildCard(String(text)));
+      });
+
+      if (!feed.children.length){
+        feed.innerHTML = '<p class="state-msg">Found documents in "Quotes" but couldn\'t read a text field. Make sure each document has a field like "text".</p>';
+      }
+    }catch(e){
+      console.error(e);
+      feed.innerHTML = '<p class="state-msg">Couldn\'t load comments. Check Firestore rules allow public read on "Quotes".</p>';
+    }
+  }
+
+  loadQuotes();
+</script>
+
+</body>
+</html>
