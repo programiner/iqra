@@ -94,67 +94,6 @@
     max-width: 440px;
   }
 
-  /* ---------- LEDGER (analytics) ---------- */
-  .ledger{
-    width: 100%;
-    max-width: 600px;
-    padding: 0 20px;
-    margin-bottom: 28px;
-  }
-
-  .ledger-inner{
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    background: #fff;
-    overflow: hidden;
-  }
-
-  .ledger-row{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 18px;
-    border-bottom: 1px solid var(--line-soft);
-  }
-
-  .ledger-row:last-child{ border-bottom: none; }
-
-  .ledger-row.lead{
-    background: var(--red-soft);
-  }
-
-  .ledger-label{
-    font-size: 13px;
-    color: var(--ink-soft);
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-  }
-
-  .ledger-row.lead .ledger-label{
-    color: var(--ink);
-    font-weight: 600;
-  }
-
-  .ledger-num{
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 500;
-    font-size: 15px;
-    color: var(--ink);
-  }
-
-  .ledger-row.lead .ledger-num{
-    font-size: 22px;
-    font-weight: 600;
-    color: var(--red);
-  }
-
-  .ledger-note{
-    font-size: 11px;
-    color: #a3a2a0;
-    padding: 10px 18px 0;
-  }
-
   /* ---------- STEPS ---------- */
   .steps{
     width: 100%;
@@ -324,27 +263,6 @@
   <p class="sub">One comment won't move her. A thousand on her own reel might. Copy a line, paste it there, send it.</p>
 </header>
 
-<div class="ledger">
-  <div class="ledger-inner" id="ledger">
-    <div class="ledger-row lead">
-      <span class="ledger-label">Marked as sent</span>
-      <span class="ledger-num mono" id="statSent">—</span>
-    </div>
-    <div class="ledger-row">
-      <span class="ledger-label">Comments copied</span>
-      <span class="ledger-num mono" id="statCopied">—</span>
-    </div>
-    <div class="ledger-row">
-      <span class="ledger-label">Reel opened</span>
-      <span class="ledger-num mono" id="statOpened">—</span>
-    </div>
-    <div class="ledger-row">
-      <span class="ledger-label">Send rate</span>
-      <span class="ledger-num mono" id="statRate">—</span>
-    </div>
-  </div>
-  <p class="ledger-note">Self-reported — counts a tap, not a confirmed Instagram comment</p>
-</div>
 
 <div class="steps">
   <div class="step">
@@ -357,7 +275,7 @@
   </div>
   <div class="step">
     <span class="step-num mono">03</span>
-    <span class="step-text">Send, then mark it done</span>
+    <span class="step-text">Send!</span>
   </div>
 </div>
 
@@ -375,7 +293,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
     getFirestore, collection, getDocs,
-    doc, runTransaction, onSnapshot
+    doc, runTransaction
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -395,10 +313,6 @@
 
   const feed = document.getElementById('feed');
   const toastEl = document.getElementById('toast');
-  const statSent = document.getElementById('statSent');
-  const statCopied = document.getElementById('statCopied');
-  const statOpened = document.getElementById('statOpened');
-  const statRate = document.getElementById('statRate');
 
   let toastTimer = null;
   function showToast(msg){
@@ -408,34 +322,17 @@
     toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
   }
 
-  // ---- robust clipboard copy with fallback for mobile/non-secure contexts ----
   async function copyText(text){
-    // Modern API — works on HTTPS in most browsers
     if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext){
       try{
         await navigator.clipboard.writeText(text);
         return true;
-      }catch(e){
-        // fall through to fallback
-      }
+      }catch(e){}
     }
-
-    // Fallback — works even on file:// or older mobile browsers,
-    // as long as it runs synchronously inside the click handler
     try{
       const textarea = document.createElement('textarea');
       textarea.value = text;
-      textarea.style.position = 'fixed';
-      textarea.style.top = '0';
-      textarea.style.left = '0';
-      textarea.style.width = '1px';
-      textarea.style.height = '1px';
-      textarea.style.padding = '0';
-      textarea.style.border = 'none';
-      textarea.style.outline = 'none';
-      textarea.style.boxShadow = 'none';
-      textarea.style.background = 'transparent';
-      textarea.style.fontSize = '16px'; // prevents iOS zoom on focus
+      textarea.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;padding:0;border:none;outline:none;box-shadow:none;background:transparent;font-size:16px';
       document.body.appendChild(textarea);
       textarea.focus();
       textarea.select();
@@ -448,25 +345,7 @@
     }
   }
 
-  // ---- stats doc: stats/campaign { sent, copied, opened } ----
   const statsRef = doc(db, "stats", "campaign");
-
-  function renderStats(data){
-    const sent = data.sent || 0;
-    const copied = data.copied || 0;
-    const opened = data.opened || 0;
-    statSent.textContent = sent.toLocaleString();
-    statCopied.textContent = copied.toLocaleString();
-    statOpened.textContent = opened.toLocaleString();
-    const rate = opened > 0 ? Math.round((sent / opened) * 100) : 0;
-    statRate.textContent = opened > 0 ? rate + '%' : '—';
-  }
-
-  onSnapshot(statsRef, (snap) => {
-    renderStats(snap.exists() ? snap.data() : {});
-  }, () => {
-    renderStats({});
-  });
 
   async function bumpStat(field){
     try{
@@ -476,12 +355,9 @@
         const current = data[field] || 0;
         tx.set(statsRef, { ...data, [field]: current + 1 }, { merge: true });
       });
-    }catch(e){
-      console.error("Stat update failed:", field, e);
-    }
+    }catch(e){ console.error("Stat update failed:", field, e); }
   }
 
-  // ---- build a card ----
   function buildCard(text){
     const card = document.createElement('div');
     card.className = 'card';
@@ -510,10 +386,7 @@
         copyBtn.classList.add('copied');
         copyBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Copied`;
         showToast("Copied. Paste it on the reel.");
-        if (!hasCopiedThisCard){
-          hasCopiedThisCard = true;
-          bumpStat('copied');
-        }
+        if (!hasCopiedThisCard){ hasCopiedThisCard = true; bumpStat('copied'); }
         setTimeout(() => {
           copyBtn.classList.remove('copied');
           copyBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy`;
@@ -525,25 +398,15 @@
 
     goBtn.addEventListener('click', async () => {
       const ok = await copyText(text);
-
-      if (!hasOpenedThisCard){
-        hasOpenedThisCard = true;
-        bumpStat('opened');
-      }
-
+      if (!hasOpenedThisCard){ hasOpenedThisCard = true; bumpStat('opened'); }
       if (!card.classList.contains('done')){
         card.classList.add('done');
         goBtn.classList.add('done');
         goBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> I sent it`;
         bumpStat('sent');
       }
-
-      if (ok){
-        showToast("Copied. Opening the reel — just paste and send.");
-      } else {
-        showToast("Couldn't auto-copy — long-press the text above, then open the reel.");
-      }
-
+      if (ok){ showToast("Copied. Opening the reel — just paste and send."); }
+      else { showToast("Couldn't auto-copy — long-press the text above, then open the reel."); }
       window.open(REEL_URL, '_blank', 'noopener');
     });
 
@@ -554,14 +417,14 @@
     return card;
   }
 
-  // ---- load quotes from Firestore ----
-  async function loadQuotes(){
+  // ---- load from "Prompts" collection ----
+  async function loadPrompts(){
     try{
-      const snap = await getDocs(collection(db, "Quotes"));
+      const snap = await getDocs(collection(db, "Prompts"));
       feed.innerHTML = '';
 
       if (snap.empty){
-        feed.innerHTML = '<p class="state-msg">No comments added yet. Add documents to the "Quotes" collection in Firestore.</p>';
+        feed.innerHTML = '<p class="state-msg">No prompts added yet. Use the admin panel to add some.</p>';
         return;
       }
 
@@ -572,15 +435,15 @@
       });
 
       if (!feed.children.length){
-        feed.innerHTML = '<p class="state-msg">Found documents in "Quotes" but couldn\'t read a text field. Make sure each document has a field like "text".</p>';
+        feed.innerHTML = '<p class="state-msg">Found documents in "Prompts" but couldn\'t read a text field. Make sure each document has a "text" field.</p>';
       }
     }catch(e){
       console.error(e);
-      feed.innerHTML = '<p class="state-msg">Couldn\'t load comments. Check Firestore rules allow public read on "Quotes".</p>';
+      feed.innerHTML = '<p class="state-msg">Couldn\'t load prompts. Check Firestore rules allow public read on "Prompts".</p>';
     }
   }
 
-  loadQuotes();
+  loadPrompts();
 </script>
 
 </body>
