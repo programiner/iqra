@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Justice for Iqra — Campaign</title>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+    :root{
+      --bg:#f2f2f7;
+      --surface:#ffffff;
+      --surface2:#f9f9fb;
+      --border:rgba(0,0,0,.08);
+      --border-strong:rgba(0,0,0,.13);
+      --text1:#0a0a0b;
+      --text2:#3a3a3c;
+      --text3:#8a8a8e;
+      --red:#c0392b;
+      --red-light:#fff0ef;
+      --red-mid:rgba(192,57,43,.12);
+      --green:#1a7f4b;
+      --card-r:20px;
+      --btn-r:50px;
+    }
+
+    html{scroll-behavior:smooth}
+
+    body{
+      font-family:'Inter',system-ui,-apple-system,sans-serif;
+      background:var(--bg);
+      color:var(--text1);
+      -webkit-font-smoothing:antialiased;
+      min-height:100vh;
+    }
+
+    /* NAV */
+    nav{
+      position:sticky;top:0;z-index:200;
+      background:rgba(242,242,247,.88);
+      backdrop-filter:saturate(200%) blur(24px);
+      -webkit-backdrop-filter:saturate(200%) blur(24px);
+      border-bottom:1px solid var(--border);
+    }
+    .nav-inner{
+      max-width:960px;margin:0 auto;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0 24px;height:56px;
+    }
+    .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+    .nav-dot{
+      width:9px;height:9px;border-radius:50%;background:var(--red);
+      animation:breathe 2.4s ease-in-out infinite;
+    }
+    @keyframes breathe{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.6}}
+    .nav-title{font-size:15px;font-weight:700;letter-spacing:-.3px;color:var(--text1)}
+    .nav-pill{
+      font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+      color:var(--red);background:var(--red-light);border:1px solid rgba(192,57,43,.18);
+      border-radius:6px;padding:4px 9px;
+    }
+
+    /* HERO */
+    .hero{
+      max-width:960px;margin:0 auto;
+      padding:72px 24px 48px;
+      display:grid;grid-template-columns:1fr auto;
+      align-items:end;gap:24px;
+    }
+    @media(max-width:640px){.hero{grid-template-columns:1fr;padding:48px 20px 32px}}
+    .hero-label{
+      font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+      color:var(--red);display:flex;align-items:center;gap:8px;margin-bottom:16px;
+    }
+    .hero-label::before{content:'';display:inline-block;width:24px;height:2px;background:var(--red);border-radius:2px}
+    .hero-h1{
+      font-size:clamp(38px,6vw,64px);font-weight:900;
+      line-height:1.02;letter-spacing:-.04em;color:var(--text1);
+      margin-bottom:18px;
+    }
+    .hero-h1 em{font-style:normal;color:var(--red)}
+    .hero-body{
+      font-size:16px;line-height:1.65;color:var(--text2);
+      max-width:480px;font-weight:400;
+    }
+    .hero-stats{
+      display:flex;flex-direction:column;align-items:flex-end;gap:4px;
+      padding:22px 26px;background:var(--surface);border:1px solid var(--border);
+      border-radius:18px;min-width:140px;text-align:right;
+      box-shadow:0 2px 12px rgba(0,0,0,.06);
+      flex-shrink:0;
+    }
+    @media(max-width:640px){.hero-stats{flex-direction:row;align-items:center;justify-content:space-between;min-width:unset;text-align:left}}
+    .stat-number{font-size:48px;font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--text1)}
+    .stat-label{font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--text3)}
+
+    /* TOOLBAR */
+    .toolbar{
+      max-width:960px;margin:0 auto;
+      padding:0 24px 20px;
+      display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+    }
+    .search-wrap{
+      flex:1;min-width:180px;max-width:340px;
+      position:relative;display:flex;align-items:center;
+    }
+    .search-wrap svg{position:absolute;left:13px;color:var(--text3);pointer-events:none}
+    .search-input{
+      width:100%;background:var(--surface);border:1px solid var(--border-strong);
+      border-radius:var(--btn-r);padding:9px 14px 9px 38px;
+      font-family:inherit;font-size:14px;color:var(--text1);outline:none;
+      transition:border-color .2s,box-shadow .2s;
+    }
+    .search-input::placeholder{color:var(--text3)}
+    .search-input:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(192,57,43,.12)}
+    .toolbar-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+    .btn-random{
+      display:flex;align-items:center;gap:6px;
+      background:var(--text1);color:#fff;border:none;border-radius:var(--btn-r);
+      padding:9px 16px;font-family:inherit;font-size:13px;font-weight:600;
+      cursor:pointer;transition:opacity .2s,transform .15s;
+    }
+    .btn-random:hover{opacity:.82}.btn-random:active{transform:scale(.96)}
+
+    /* GRID */
+    .grid{
+      max-width:960px;margin:0 auto;
+      padding:0 24px 80px;
+      display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));
+      gap:16px;
+    }
+
+    /* CARD */
+    .card{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:var(--card-r);padding:26px 24px 20px;
+      display:flex;flex-direction:column;gap:16px;
+      position:relative;overflow:hidden;
+      box-shadow:0 1px 8px rgba(0,0,0,.05);
+      transition:transform .22s cubic-bezier(.4,0,.2,1),
+                 box-shadow .22s cubic-bezier(.4,0,.2,1);
+      opacity:0;transform:translateY(12px);
+      animation:cardIn .35s cubic-bezier(.4,0,.2,1) forwards;
+    }
+    @keyframes cardIn{to{opacity:1;transform:translateY(0)}}
+    .card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.1)}
+
+    .card-accent{
+      position:absolute;top:0;left:0;right:0;height:3px;
+      background:linear-gradient(90deg,var(--red),#e74c3c);
+      transform:scaleX(0);transform-origin:left;
+      transition:transform .3s cubic-bezier(.4,0,.2,1);
+    }
+    .card:hover .card-accent{transform:scaleX(1)}
+
+    .card-top{display:flex;align-items:center;justify-content:space-between}
+    .card-idx{
+      font-size:11px;font-weight:700;letter-spacing:1.5px;
+      text-transform:uppercase;color:var(--red);
+    }
+    .card-qmark{
+      font-size:36px;line-height:1;color:var(--red-mid);
+      font-family:Georgia,serif;font-weight:700;user-select:none;
+    }
+
+    .card-text{
+      font-size:15px;line-height:1.65;color:var(--text2);
+      flex:1;font-weight:400;word-break:break-word;
+    }
+
+    .card-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+
+    .btn{
+      display:flex;align-items:center;justify-content:center;gap:6px;
+      border:none;border-radius:var(--btn-r);font-family:inherit;
+      font-size:13px;font-weight:600;cursor:pointer;padding:9px 12px;
+      transition:opacity .18s,transform .15s,background .2s;
+      white-space:nowrap;letter-spacing:-.1px;
+    }
+    .btn:active{transform:scale(.95)}
+
+    .btn-copy{background:var(--text1);color:#fff}
+    .btn-copy:hover{opacity:.8}
+    .btn-copy.copied{background:var(--green)}
+
+    .btn-reel{
+      background:linear-gradient(135deg,#f09433,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888);
+      color:#fff;
+    }
+    .btn-reel:hover{opacity:.86}
+
+    /* STATES */
+    .state{
+      grid-column:1/-1;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;padding:80px 24px;gap:14px;text-align:center;
+    }
+    .spinner{
+      width:32px;height:32px;border:3px solid var(--border);
+      border-top-color:var(--text1);border-radius:50%;
+      animation:spin .65s linear infinite;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .state-title{font-size:17px;font-weight:600;color:var(--text1)}
+    .state-sub{font-size:14px;color:var(--text3);max-width:300px}
+
+    /* TOAST */
+    #toast{
+      position:fixed;bottom:28px;left:50%;
+      transform:translateX(-50%) translateY(16px);
+      background:rgba(10,10,11,.9);color:#fff;
+      font-size:13px;font-weight:500;
+      padding:10px 20px;border-radius:var(--btn-r);
+      pointer-events:none;opacity:0;
+      transition:opacity .22s,transform .22s;
+      white-space:nowrap;z-index:999;display:flex;align-items:center;gap:8px;
+    }
+    #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+    /* RANDOM HIGHLIGHT */
+    .card.highlighted{
+      outline:2px solid var(--red);
+      outline-offset:2px;
+      box-shadow:0 0 0 6px var(--red-mid),0 12px 32px rgba(0,0,0,.1);
+    }
+
+    footer{
+      text-align:center;padding:22px;
+      font-size:12px;color:var(--text3);
+      border-top:1px solid var(--border);
+    }
+    footer a{color:var(--red);text-decoration:none;font-weight:600}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">
+      <div class="nav-dot"></div>
+      <span class="nav-title">Justice for Iqra</span>
+    </a>
+    <span class="nav-pill">Live Campaign</span>
+  </div>
+</nav>
+
+<section class="hero">
+  <div>
+    <div class="hero-label">Comments Campaign</div>
+    <h1 class="hero-h1">Your voice is<br/><em>their pressure.</em></h1>
+    <p class="hero-body">
+      Pick a quote, copy it, and drop it on the MLA's reel.
+      Flood the comments. Make it impossible to ignore.
+    </p>
+  </div>
+  <div class="hero-stats">
+    <span class="stat-number" id="statNum">—</span>
+    <span class="stat-label">Quotes Ready</span>
+  </div>
+</section>
+
+<div class="toolbar">
+  <div class="search-wrap">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input class="search-input" id="searchInput" type="text" placeholder="Search quotes…"/>
+  </div>
+  <div class="toolbar-right">
+    <button class="btn-random" id="randomBtn">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+      Pick Random
+    </button>
+  </div>
+</div>
+
+<div class="grid" id="grid">
+  <div class="state" id="loadState">
+    <div class="spinner"></div>
+    <p class="state-title">Loading quotes…</p>
+    <p class="state-sub">Fetching from the campaign library.</p>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<footer>#JusticeForIqra</footer>
+
+<script>
+  /* ═══════════════════════════════════════════════
+     ⚙️  CONFIGURATION
+     ═══════════════════════════════════════════════ */
+  const MLA_NAME     = "Ajaz Jan";
+  const MLA_REEL_URL = "https://www.instagram.com/reel/DZmgH-Pvln4";
+
+   const firebaseConfig = {
+    apiKey: "AIzaSyAdPcwdsw_89cMDIUBmG-XHT5SkwlTMMes",
+    authDomain: "justiceforiqra.firebaseapp.com",
+    projectId: "justiceforiqra",
+    storageBucket: "justiceforiqra.firebasestorage.app",
+    messagingSenderId: "512035775265",
+    appId: "1:512035775265:web:a3a14338ab0c916b58d460",
+    measurementId: "G-9GDZ6J0598"
+  };
+  /* ═══════════════════════════════════════════════ */
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  let allCards = [];
+  let toastTimer;
+
+  function showToast(msg, icon="✓") {
+    const t = document.getElementById("toast");
+    t.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>t.classList.remove("show"), 2400);
+  }
+
+  async function copyText(text) {
+    try { await navigator.clipboard.writeText(text); }
+    catch {
+      const el = Object.assign(document.createElement("textarea"),{value:text});
+      el.style.cssText="position:fixed;opacity:0";
+      document.body.appendChild(el); el.select();
+      document.execCommand("copy"); document.body.removeChild(el);
+    }
+  }
+
+  function escH(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;") }
+  function escA(s){ return s.replace(/"/g,"&quot;").replace(/'/g,"&#39;") }
+
+  function makeCard(text, idx) {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.dataset.text = text.toLowerCase();
+    card.style.animationDelay = `${(idx-1)*40}ms`;
+    card.innerHTML = `
+      <div class="card-accent"></div>
+      <div class="card-top">
+        <span class="card-idx">Quote ${String(idx).padStart(2,"0")}</span>
+        <span class="card-qmark">"</span>
+      </div>
+      <p class="card-text">${escH(text)}</p>
+      <div class="card-actions">
+        <button class="btn btn-copy" data-q="${escA(text)}">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy
+        </button>
+        <button class="btn btn-reel" data-q="${escA(text)}">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          Open Reel
+        </button>
+      </div>`;
+
+    card.querySelector(".btn-copy").addEventListener("click", async function(){
+      await copyText(this.dataset.q);
+      this.classList.add("copied");
+      this.innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
+      showToast("Quote copied to clipboard");
+      setTimeout(()=>{
+        this.classList.remove("copied");
+        this.innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy`;
+      },2200);
+    });
+
+    card.querySelector(".btn-reel").addEventListener("click", async function(){
+      await copyText(this.dataset.q);
+      showToast("Copied! Paste in the comments ✌️","🎯");
+      window.open(MLA_REEL_URL,"_blank","noopener,noreferrer");
+    });
+
+    return card;
+  }
+
+  // Search
+  document.getElementById("searchInput").addEventListener("input", function(){
+    const q = this.value.toLowerCase().trim();
+    allCards.forEach(c=>{
+      c.style.display = (!q || c.dataset.text.includes(q)) ? "" : "none";
+    });
+  });
+
+  // Random pick
+  document.getElementById("randomBtn").addEventListener("click", ()=>{
+    const visible = allCards.filter(c=>c.style.display!=="none");
+    if(!visible.length) return;
+    allCards.forEach(c=>c.classList.remove("highlighted"));
+    const pick = visible[Math.floor(Math.random()*visible.length)];
+    pick.classList.add("highlighted");
+    pick.scrollIntoView({behavior:"smooth",block:"center"});
+    showToast("Random quote highlighted","🎲");
+    setTimeout(()=>pick.classList.remove("highlighted"),3000);
+  });
+
+  async function load(){
+    const grid = document.getElementById("grid");
+    const loadState = document.getElementById("loadState");
+    try {
+      const snap = await db.collection("QuoteAJ").orderBy("createdAt","desc").get().catch(()=>db.collection("QuoteAJ").get());
+      loadState.remove();
+      if(snap.empty){
+        grid.innerHTML=`<div class="state"><p class="state-title">No quotes yet</p><p class="state-sub">Add quotes from the <a href="admin.html" style="color:var(--red)">admin panel</a>.</p></div>`;
+        return;
+      }
+      let i=1;
+      snap.forEach(doc=>{
+        const d=doc.data();
+        const text=(d.quote||d.text||d.Quote||d.content||"").trim();
+        if(text){ const c=makeCard(text,i++); allCards.push(c); grid.appendChild(c); }
+      });
+      document.getElementById("statNum").textContent = i-1;
+    } catch(e){
+      loadState.innerHTML=`<p class="state-title">Could not load quotes</p><p class="state-sub">${e.message}</p>`;
+    }
+  }
+
+  load();
+</script>
+</body>
+</html>
